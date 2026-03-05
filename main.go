@@ -1,50 +1,36 @@
 package main
 
 import (
-	"log"
+	"fmt"
 	"main/logic"
 
-	"github.com/lxn/walk"
-
-	. "github.com/lxn/walk/declarative"
+	"fyne.io/fyne/v2/app"
+	"fyne.io/fyne/v2/container"
+	"fyne.io/fyne/v2/widget"
 )
 
-const myWidgetWindowClass = "MyWidget Class"
-var mw *walk.MainWindow
-func init() {
-	walk.AppendToWalkInit(func() {
-		walk.MustRegisterWindowClass(myWidgetWindowClass)
-	})
-	logic.SetParent(mw)
-}
-
-var buttons = []string{"Pomodoro", "Short Break", "Long Break"}
-
 func main() {
-	
+	a := app.New()
+	w := a.NewWindow("Pomodoro Timer")
 
-	if err := (MainWindow{
-		AssignTo: &mw,
-		Title:    "Timer",
-		Size:     Size{400, 300},
-		Layout:   HBox{},
-	}).Create(); err != nil {
-		log.Fatal(err)
-	}
+	hello := widget.NewLabel("Timer")
 
-	for _, name := range buttons {
-		if w, err := logic.NewMyWidget(mw); err != nil {
-			log.Fatal(err)
-		} else {
-			w.SetName(name)
-		}
-	}
+	w.SetContent(container.NewVBox(
+		hello,
+		container.NewHBox(widget.NewButton("Pomodoro", func() {
+			hello.SetText("25:00")
+		}),
+			widget.NewButton("Short Break", func() {
+				hello.SetText("5:00")
+			}),
+			widget.NewButton("Long Break", func() {
+				hello.SetText("30:00")
+			})),
+		widget.NewButton("Start", func() {
+			logic.StartTimer()
+		}),
+	))
+	fmt.Println("App is runnning!")
+	w.ShowAndRun()
 
-	mpb, err := logic.NewMyPushButton(mw)
-	if err != nil {
-		log.Fatal(err)
-	}
-	mpb.SetText("MyPushButton")
-
-	mw.Run()
 }
